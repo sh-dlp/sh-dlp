@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#shell script for extracting public videos URL from instagram
+
+#encoding characters
+enc_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+
+#creating table
+table=$(printf "$enc_char" | sed 's/\(.\)/\1\n/g' | nl -v0 | tr '\t' ':' | tr -d ' ')
+
+res=0 #setting result value to zero
+id="$(printf "$*" | sed -nE 's_.*instagram.*/p/([^/]*)/_\1_p')" #ID taken from arguments
+
+#looping at every character
+for key in $(printf "$id" | sed -e 's/\(.\)/\1\n/g');do 
+    #finding that character value in table
+    value=$(printf "$table" | sed -nE "s/([^:]*):$key/\1/p")
+    #adding that value in result
+    res=$((res*64+value))
+done
+
+printf "$id -> $res\n"
+
+agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+
+#main extraction code
+curl -s "https://i.instagram.com/api/v1/web/get_ruling_for_content/?content_type=MEDIA&target_id=$res" -H "x-asbd-id:198387" -H "x-ig-app-id:936619743392459" -H "x-ig-www-claim:0" -A "$agent" -c - -o /dev/null | curl -s "https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables=%7B%22shortcode%22%3A%22$id%22%2C%22include_reel%22%3Afalse%2C%22include_logged_out%22%3Atrue%7D" -H "x-asbd-id:198387" -H "x-ig-app-id:936619743392459" -H "x-ig-www-claim:0" -H "x-requested-with:XMLHttpRequest" -e "https://www.instagram.com/p/$id/" -A "$agent" -b - | tr '{|}' '\n' | sed -nE 's|.*video_url":"([^"]*)".*|\1|p' | sed 's/\u0026/\&/g' | tr -d '\\'

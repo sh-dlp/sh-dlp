@@ -1,0 +1,8 @@
+#!/bin/sh
+
+#for extracting links from fembed
+
+fb_id=$(printf "$*" | sed -n "s_.*fembed.*/[v|f]/__p")
+
+#main logic
+curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr -d '\\' | sed -nE 's/.*file":"([^"]*)".*/\1/p'
