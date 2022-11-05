@@ -1,0 +1,14 @@
+#!/bin/sh
+
+[ -z "$1" ] && echo "No URL provided" && exit 1
+
+if printf "%s" "$1" | grep -qE 'https?://www\.tiktok\.com/(?:embed|@[\w\.-]+/video)/\d+' 2>/dev/null; then
+  echo "Invalid URL"
+  exit 1
+fi
+
+id=$(printf "%s" "$1" | sed -e 's/.*\/\([0-9]*\).*/\1/')
+[ -z "$id" ] && echo "Could not find ID" && exit 1
+
+curl -s "https://api-h2.tiktokv.com/aweme/v1/feed/?aweme_id=${id}&aid=1180&ssmix=a" -A "uwu"|
+  grep -oE '\["([^/]*)(//v[^"]*)' | head -1 | sed 's/\["//;s_\u0026_\&_g;s_\\__g'
