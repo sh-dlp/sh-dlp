@@ -12,12 +12,12 @@ fb_id=$(printf "$*" | sed -n "s_.*fembed.*/[v|f]/__p")
 title=$(curl -s "$*" -A "$agent" | sed -nE "s|.*>Video ([^<]*)</title.*|\1|p")
 
 #main logic
-video_url=$(curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr -d '\\' | sed -nE 's/.*file":"([^"]*)".*/\1/p')
+video_url=$(curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr '{|}' '\n' | sed -nE 's/.*file":"([^"]*)","label":"([^"]*)".*/\2 > \1/p' | tr -d '\\')
 
 if [ -n "$video_url" ];then
-    printf "Name : %s\n" "$title"
-    printf "referer : %s\n" "$*"
-    printf "URL : %s\n" "$video_url"
+    printf "Name >> %s\n" "$title"
+    printf "referer >> %s\n" "$*"
+    printf "URL >>\n%s\n" "$video_url"
 else
     printf "Cannot fetch final url"
 fi

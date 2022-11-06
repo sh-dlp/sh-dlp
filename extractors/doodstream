@@ -22,9 +22,9 @@ url=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "${dood_link}${ha
 
 #final url
 if [ -n "$url" ];then
-    printf "Name : %s\n" "$title"
-    printf "referer : %s\n" "$dood_link"
-    printf "URL : %sdoodstream?token=%s&expiry=%s" "$url" "$token" "$(date +'%s%3N')"
+    printf "Name >> %s\n" "$title"
+    printf "referer >> %s\n" "$dood_link"
+    printf "URL >>\n %sdoodstream?token=%s&expiry=%s\n" "$url" "$token" "$(date +'%s%3N')"
 else
     printf "Cannot fetch final url"
 fi
