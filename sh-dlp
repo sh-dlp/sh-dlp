@@ -15,6 +15,9 @@ case "$1" in
   *dood*)
     extractors/doodstream "$1"
     ;;
+  *youtu*)
+    extractors/youtube "$1"
+    ;;
   *)
     echo "Unsupported URL"
     exit 1
