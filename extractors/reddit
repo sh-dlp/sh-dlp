@@ -1,0 +1,11 @@
+#!/bin/sh
+
+JSON_INPUT="$(printf "%s" "$1" | sed -e 's/www/gql/' -e 's/$/.json/')"
+
+JSON=$(curl -s "${JSON_INPUT}" \
+  -H "Host: www.reddit.com" \
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.43 Safari/537.36")
+
+VIDEO_LINKS=$(printf "%s" "${JSON}" | sed -n 's/.*"media": {"reddit_video": {"bitrate_kbps": [0-9]*, "fallback_url": "\([^"]*\)".*/\1/p')
+
+printf "%s" "${VIDEO_LINKS}"
