@@ -3,14 +3,17 @@
 [ -z "$1" ] && echo "No URL provided" && exit 1
 
 case "$1" in
-  *tiktok.com*)
+  *tiktok*)
     extractors/tiktok "$1"
     ;;
-  *instagram.com*)
+  *instagram*)
     extractors/instagram "$1"
     ;;
-  *fembed.com*)
+  *fembed*)
     extractors/fembed "$1"
+    ;;
+  *dood*)
+    extractors/doodstream "$1"
     ;;
   *)
     echo "Unsupported URL"
