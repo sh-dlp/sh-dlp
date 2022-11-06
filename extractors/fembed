@@ -2,7 +2,22 @@
 
 #for extracting links from fembed
 
+#user agent
+agent="Mozilla/5.0 (Linux; Android 11; moto g(9) power) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36"
+
+#extracting fembed id from arguments
 fb_id=$(printf "$*" | sed -n "s_.*fembed.*/[v|f]/__p")
 
+#fetching title
+title=$(curl -s "$*" -A "$agent" | sed -nE "s|.*>Video ([^<]*)</title.*|\1|p")
+
 #main logic
-curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr -d '\\' | sed -nE 's/.*file":"([^"]*)".*/\1/p'
+video_url=$(curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr -d '\\' | sed -nE 's/.*file":"([^"]*)".*/\1/p')
+
+if [ -n "$video_url" ];then
+    printf "Name : %s\n" "$title"
+    printf "referer : %s\n" "$*"
+    printf "URL : %s\n" "$video_url"
+else
+    printf "Cannot fetch final url"
+fi

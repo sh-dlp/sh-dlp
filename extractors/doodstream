@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#doodstream extractors
+
+#user agent
+agent="Mozilla/5.0 (Linux; Android 11; moto g(9) power) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36"
+
+##id extraction from arguments
+dood_id=$(printf "$*" | sed -n "s_.*dood.*/e/__p")
+dood_link="https://dood.ws"
+
+#fetching first link and title
+data=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "$dood_link/e/$dood_id" | sed -nE "s|.*>([^<]*)</title.*(/pass_md5[^']*)',.*|\1\n\2|p")
+
+#self explainatory - extracting title, hash and token
+title=$(printf "%s" "$data" | head -1)
+hash_part=$(printf "%s" "$data" | tail -1)
+token=$(echo $hash_part | cut -d "/" -f4)
+
+#final url prefix part
+url=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "${dood_link}${hash_part}" -e "$dood_link")
+
+#final url
+if [ -n "$url" ];then
+    printf "Name : %s\n" "$title"
+    printf "referrer : %s\n" "$dood_link"
+    printf "URL : %sdoodstream?token=%s&expiry=%s" "$url" "$token" "$(date +'%s%3N')"
+else
+    printf "Cannot fetch final url"
+fi
