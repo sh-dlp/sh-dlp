@@ -6,13 +6,13 @@
 agent="Mozilla/5.0 (Linux; Android 11; moto g(9) power) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36"
 
 #extracting fembed id from arguments
-fb_id=$(printf "$*" | sed -nE "s_.*[fembed|embedsito].*/v/([^#]*).*_\1_p")
+fb_id=$(printf "$*" | sed -nE "s_.*[fembed|embedsito].*/[v|f]/([^#]*).*_\1_p")
 
 [ -z "$fb_id" ] && printf "[ fembed ] Invalid link\n" && exit 1
 
 printf "[ fembed ] [ $fb_id ] Downloading webpage\n"
 #fetching title
-title=$(curl -s "$*" -A "$agent" | sed -nE "s|.*>Video ([^<]*)</title.*|\1|p")
+title=$(curl -s "$*" -A "$agent" | sed -nE "s|.*>(Video )?([^<]*)</title.*|\2|p")
 
 printf "[ fembed ] [ $fb_id ] Fetching video url\n"
 #main logic
