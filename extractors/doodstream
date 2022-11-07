@@ -6,9 +6,13 @@
 agent="Mozilla/5.0 (Linux; Android 11; moto g(9) power) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36"
 
 ##id extraction from arguments
-dood_id=$(printf "$*" | sed -n "s_.*dood.*/e/__p")
+dood_id=$(printf "$*" | sed -nE "s_.*dood.*/[e|d]/([^?]*).*_\1_p")
 dood_link="https://dood.ws"
 
+
+[ -z "$dood_id" ] && printf "[ doodstream ] Invalid link\n" && exit 1
+
+printf "[ doodstream ] [ $dood_id ] Downloading webpage\n"
 #fetching first link and title
 data=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "$dood_link/e/$dood_id" | sed -nE "s|.*>([^<]*)</title.*(/pass_md5[^']*)',.*|\1\n\2|p")
 
@@ -17,14 +21,16 @@ title=$(printf "%s" "$data" | head -1)
 hash_part=$(printf "%s" "$data" | tail -1)
 token=$(echo $hash_part | cut -d "/" -f4)
 
+printf "[ doodstream ] [ $dood_id ] Fetching Video url\n"
 #final url prefix part
-url=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "${dood_link}${hash_part}" -e "$dood_link")
+video_url=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "${dood_link}${hash_part}" -e "$dood_link")
 
 #final url
-if [ -n "$url" ];then
+if [ -n "$video_url" ];then
     printf "Name >> %s\n" "$title"
     printf "referer >> %s\n" "$dood_link"
-    printf "URL >>\n %sdoodstream?token=%s&expiry=%s\n" "$url" "$token" "$(date +'%s%3N')"
+    printf "URL >> %sdoodstream?token=%s&expiry=%s\n" "$video_url" "$token" "$(date +'%s%3N')"
+    printf "\n"
 else
-    printf "Cannot fetch final url"
+    printf "[ doodstream ] [ $dood_id ] Cannot fetch final url\n\n"
 fi

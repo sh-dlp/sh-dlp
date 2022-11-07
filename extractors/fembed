@@ -6,11 +6,15 @@
 agent="Mozilla/5.0 (Linux; Android 11; moto g(9) power) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36"
 
 #extracting fembed id from arguments
-fb_id=$(printf "$*" | sed -n "s_.*fembed.*/[v|f]/__p")
+fb_id=$(printf "$*" | sed -nE "s_.*[fembed|embedsito].*/v/([^#]*).*_\1_p")
 
+[ -z "$fb_id" ] && printf "[ fembed ] Invalid link\n" && exit 1
+
+printf "[ fembed ] [ $fb_id ] Downloading webpage\n"
 #fetching title
 title=$(curl -s "$*" -A "$agent" | sed -nE "s|.*>Video ([^<]*)</title.*|\1|p")
 
+printf "[ fembed ] [ $fb_id ] Fetching video url\n"
 #main logic
 video_url=$(curl -A "$agent" -s -X POST "https://fembed-hd.com/api/source/$fb_id" -H "x-requested-with:XMLHttpRequest" | tr '{|}' '\n' | sed -nE 's/.*file":"([^"]*)","label":"([^"]*)".*/\2 > \1/p' | tr -d '\\')
 
@@ -18,6 +22,7 @@ if [ -n "$video_url" ];then
     printf "Name >> %s\n" "$title"
     printf "referer >> %s\n" "$*"
     printf "URL >>\n%s\n" "$video_url"
+    printf "\n"
 else
-    printf "Cannot fetch final url"
+    printf "[ fembed ] [ $fb_id ] Cannot fetch final url\n\n"
 fi
