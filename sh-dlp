@@ -21,6 +21,9 @@ case "$1" in
   *membed*)
     $(printf "$0" | sed 's_/[^/]*$__')/extractors/membed "$1"
     ;;
+  *gogo*)
+    $(printf "$0" | sed 's_/[^/]*$__')/extractors/gogoanime "$1"
+    ;;
   *)
     echo "Unsupported URL"
     exit 1

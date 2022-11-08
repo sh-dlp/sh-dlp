@@ -6,7 +6,7 @@
 id=$(printf "$*" | cut -d"=" -f2 | cut -d"/" -f4)
 
 #check if id exists
-[ -z "$id" ] && printf "[ youtube ] Invalid link\n" && exit 1
+[ -z "$id" ] && printf "\033[1;31m[ youtube ] Invalid link\n" && exit 1
 
 #user-agent
 agent="com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip"
@@ -34,7 +34,7 @@ json="{
   \"racyCheckOk\": true
 }"
 
-printf "[ youtube ] [ $id ] Extracting video url\n"
+printf "\033[1;36m[ youtube ] [ $id ] Extracting video url\n"
 #main logic
 data=$(curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.115 Safari/537.36" -s "https://www.youtube.com/watch?v=$id&bpctr=9999999999&has_verified=1" -o /dev/null -c - | curl -X POST -A "$agent" -s "https://www.youtube.com/youtubei/v1/player?key=AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w&prettyPrint=false" -H "content-type:application/json" -H "x-youtube-client-name:3" -H "x-youtube-client-version:17.31.35" -d "$json" -b -)
 
@@ -43,11 +43,11 @@ separate_video_audio_url=$(printf "%s" "$data" | jq '.streamingData.adaptiveForm
 title=$(printf "%s" "$data" | jq '.videoDetails.title' -r)
 
 if [ -n "$combined_video_audio_url" ] || [ -n "$seperate_video_audio_url" ];then
-    printf "Name >> %s\n" "$title"
-    printf "referer >> %s\n" "$*"
-    printf "URL >>\nVideo Quality\t| Audio Bitrate\t|\t\t\tmimetype\t\t\t|\tvideo_url\n"
+    printf "\033[1;32m Name >>\033[0m %s\n" "$title"
+    printf "\033[1;32m referer >>\033[0m %s\n" "$*"
+    printf "\033[1;32m URL >>\nQuality\t| Audio Bitrate\t|\t\t\tmimetype\t\t\t|\tvideo_url\033[0m\n"
     printf "%s\n%s" "$combined_video_audio_url" "$separate_video_audio_url"
     printf "\n"
 else
-    printf "[ youtube ] [ $id ] Cannot fetch final urls\n\n"
+    printf "\033[1;31m[ youtube ] [ $id ] Cannot fetch final urls\n\n"
 fi

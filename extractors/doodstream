@@ -10,9 +10,9 @@ dood_id=$(printf "$*" | sed -nE "s_.*dood.*/[e|d]/([^?]*).*_\1_p")
 dood_link="https://dood.ws"
 
 
-[ -z "$dood_id" ] && printf "[ doodstream ] Invalid link\n" && exit 1
+[ -z "$dood_id" ] && printf "\033[1;31m[ doodstream ] Invalid link\n" && exit 1
 
-printf "[ doodstream ] [ $dood_id ] Downloading webpage\n"
+printf "\033[1;36m[ doodstream ] [ $dood_id ] Downloading webpage\n"
 #fetching first link and title
 data=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "$dood_link/e/$dood_id" | sed -nE "s|.*>([^<]*)</title.*(/pass_md5[^']*)',.*|\1\n\2|p")
 
@@ -21,16 +21,16 @@ title=$(printf "%s" "$data" | head -1)
 hash_part=$(printf "%s" "$data" | tail -1)
 token=$(echo $hash_part | cut -d "/" -f4)
 
-printf "[ doodstream ] [ $dood_id ] Fetching Video url\n"
+printf "\033[1;36m[ doodstream ] [ $dood_id ] Fetching Video url\n"
 #final url prefix part
 video_url=$(curl --cipher AES256-SHA256 --tls-max 1.2 -s -A "$agent" "${dood_link}${hash_part}" -e "$dood_link")
 
 #final url
 if [ -n "$video_url" ];then
-    printf "Name >> %s\n" "$title"
-    printf "referer >> %s\n" "$dood_link"
-    printf "URL >> %sdoodstream?token=%s&expiry=%s\n" "$video_url" "$token" "$(date +'%s%3N')"
-    printf "\n"
+    printf "\033[1;32m Name >>\033[0m %s\n" "$title"
+    printf "\033[1;32m referer >>\033[0m %s\n" "$dood_link"
+    printf "\033[1;32m URL >>\033[0m %sdoodstream?token=%s&expiry=%s\n" "$video_url" "$token" "$(date +'%s%3N')"
+    printf "\033[0m\n"
 else
-    printf "[ doodstream ] [ $dood_id ] Cannot fetch final url\n\n"
+    printf "\033[1;31m[ doodstream ] [ $dood_id ] Cannot fetch final url\033[0m\n\n"
 fi
