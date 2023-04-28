@@ -7,8 +7,8 @@ TOKEN_1="AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8
 TOKEN_2="AAAAAAAAAAAAAAAAAAAAAPYXBAAAAAAACLXUNDekMxqa8h%2F40K4moUkGsoc%3DTYfbDKbT3jJPCEVnMYqilB28NHfOPqkca3qaAxGfsyKCs0wRbw"
 
 JSON=$(curl -s "${JSON_INPUT}" \
--H "Authorization: Bearer $TOKEN_2" \
--H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36")
+-H "Authorization: Bearer $TOKEN_1" \
+-H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36")
 
 VIDEO_LINK=$(printf "%s" "$JSON" | tr "{|}" "\n" | sed -nE "s@.*\"url\":\"(https:\\\/\\\/video[^\"]*)\".*@\1@p" | tr -d '\\'|head -1)
 

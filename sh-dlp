@@ -4,25 +4,34 @@
 
 case "$1" in
   *tiktok*)
-     $(printf "$0" | sed 's_/[^/]*$__')/extractors/tiktok "$1"
+     ./extractors/tiktok "$1"
     ;;
   *instagram*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/instagram "$1"
+    ./extractors/instagram "$1"
     ;;
   *fembed*|*embedsito*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/fembed "$1"
+    ./extractors/fembed "$1"
     ;;
   *dood*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/doodstream "$1"
+    ./extractors/doodstream "$1"
     ;;
   *youtu*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/youtube "$1"
+    ./extractors/youtube "$1"
     ;;
   *membed*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/membed "$1"
+    ./extractors/membed "$1"
     ;;
   *gogo*)
-    $(printf "$0" | sed 's_/[^/]*$__')/extractors/gogoanime "$1"
+    ./extractors/gogoanime "$1"
+    ;;
+  *flixhq*)
+    ./extractors/flixhq "$1"
+    ;;
+  *zoro*)
+    ./extractors/zoro "$1"
+    ;;
+  *rezka*)
+    ./extractors/rezka "$1"
     ;;
   *)
     echo "Unsupported URL"
